@@ -59,7 +59,6 @@ def profile(length=25, profile_dir=None):
 def deploy():
     """Run deployment tasks."""
     from flask.ext.migrate import upgrade
-    from app.models import Role, User
     # 把数据库迁移到最新修订版本
     upgrade()
     # 创建用户角色
