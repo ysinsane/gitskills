@@ -31,8 +31,8 @@ def server_shutdown():
     shutdown()
     return 'Shutting down...'
 
-
 @main.route('/', methods=['GET', 'POST'])
+@login_required
 def index():
     form = PostForm()
     if current_user.can(Permission.WRITE) and form.validate_on_submit():
@@ -56,6 +56,13 @@ def index():
     return render_template('index.html', form=form, posts=posts,
                            show_followed=show_followed, pagination=pagination)
 
+
+@main.route('/inventory>',methods=['GET', 'POST'])
+def inventory():
+    form = ListForm()
+    if form.validate_on_submit():
+        flash("nice")
+    return render_template(main/inventory.html,form=form,)
 
 @main.route('/user/<username>')
 def user(username):
