@@ -4,9 +4,9 @@ from flask_login import login_required, current_user
 from flask_sqlalchemy import get_debug_queries
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
-    CommentForm
+    CommentForm,ListForm
 from .. import db
-from ..models import Permission, Role, User, Post, Comment
+from ..models import Permission, Role, User, Post, Comment,Item
 from ..decorators import admin_required, permission_required
 
 
@@ -57,12 +57,21 @@ def index():
                            show_followed=show_followed, pagination=pagination)
 
 
-@main.route('/inventory>',methods=['GET', 'POST'])
+@main.route('/inventory',methods=['GET', 'POST'])
 def inventory():
     form = ListForm()
+    page = request.args.get('page', 1, type=int)
+    pagination=Item.query.paginate(
+            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+    items=pagination.items
     if form.validate_on_submit():
-        flash("nice")
-    return render_template(main/inventory.html,form=form,)
+        keyword=form.keyword.data
+        pagination=db.session.query(Item).filter(Item.spec.like("%"+keyword+"%")).paginate(
+            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        items=pagination.items    
+    return render_template('main/inventory.html',form=form,items=items,pagination=pagination)
 
 @main.route('/user/<username>')
 def user(username):

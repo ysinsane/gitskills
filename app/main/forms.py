@@ -11,6 +11,9 @@ class NameForm(FlaskForm):
     name = StringField('What is your name?', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+class ListForm(FlaskForm):
+    keyword=StringField("Please input a keyword for search!")
+    submit=SubmitField('Search')
 
 class EditProfileForm(FlaskForm):
     name = StringField('Real name', validators=[Length(0, 64)])

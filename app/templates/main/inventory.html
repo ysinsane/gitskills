@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{%block page_content%}
+<div>{{wtf.quick_form(form,form_type="inline")}}</div>
+<div>
+    <table>
+        <tr>
+            <th>P/N</th>
+            <th>Spec</th>
+            <th>Size</th>
+            <th>Type</th>
+            <th>Stock</th>
+        </tr>
+        {%for i in items%}
+            <tr>
+                <th><input type="checkbox" value={{i.pn}} name="select[]"/>{{i.pn}}</th>
+                <th>{{i.spec}}</th>
+                <th>{{i.size}}</th>
+                <th>{{i.type}}</th>
+                <th>{{i.stock}}</th>
+            </tr>
+        {%endfor%}
+    </table>
+</div>
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.inventory') }}
+</div>
+{% endif %}
+{% endblock %}

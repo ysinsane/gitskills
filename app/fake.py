@@ -2,7 +2,7 @@ from random import randint
 from sqlalchemy.exc import IntegrityError
 from faker import Faker
 from . import db
-from .models import User, Post
+from .models import User, Post,Item
 
 
 def users(count=100):
@@ -35,3 +35,19 @@ def posts(count=100):
                  author=u)
         db.session.add(p)
     db.session.commit()
+
+def Items_fake(count=100):
+    fake = Faker()
+    i = 0
+    while i < count:
+        item = Item(pn=fake.name(),
+                 spec=fake.user_name(),
+                 size=fake.password(),
+                 series=fake.name(),
+                 stock=randint(0,10))
+        db.session.add(item)
+        try:
+            db.session.commit()
+            i += 1
+        except IntegrityError:
+            db.session.rollback()

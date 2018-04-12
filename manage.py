@@ -2,10 +2,10 @@
 #encoding=utf-8
 import os
 from app import create_app, db
-from app.models import User, Role,Post,Follow,Comment,Permission
+from app.models import User, Role,Post,Follow,Comment,Permission,Item
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
-
+from app.fake import Items_fake
 if os.path.exists('.env'):
     print('Importing environment from .env...')
     for line in open('.env'):
@@ -24,7 +24,7 @@ manager = Manager(app)
 migrate = Migrate(app, db)
 
 def make_shell_context():
-    return dict(app=app, db=db, User=User, Role=Role)
+    return dict(app=app, db=db, User=User, Role=Role,Item=Item,generate_fake_items=Items_fake)
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
