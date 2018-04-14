@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from flask_sqlalchemy import get_debug_queries
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
-    CommentForm,ListForm
+    CommentForm,ListForm,Take_comfirmForm
 from .. import db
 from ..models import Permission, Role, User, Post, Comment,Item
 from ..decorators import admin_required, permission_required
@@ -72,6 +72,18 @@ def inventory():
             error_out=False)
         items=pagination.items    
     return render_template('main/inventory.html',form=form,items=items,pagination=pagination)
+@main.route('/take_confirm/<pn>',methods=['GET','POST'])
+def take_confirm(pn):
+    take_confirm_form = Take_comfirmForm()
+    item=Item.query.filter_by(pn=pn).first_or_404()
+    if take_confirm_form.is_submitted():
+        if item.stock>take_confirm_form.num.data:
+            item.stock-=take_confirm_form.num.data
+            db.session.add(item)
+            db.session.commit()
+            flash('You take the blade successfully!') 
+            redirect(url_for('.inventory'))
+    return render_template('main/take_confirm.html',item=item,take_confirm_form=take_confirm_form)   
 
 @main.route('/user/<username>')
 def user(username):

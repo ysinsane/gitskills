@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{%block page_content%}
+<form class="take_confirm_form" name="take_confirm_form" method="POST" action="">
+    <table>
+        <tr>
+            <th>P/N</th>
+            <th>Spec</th>
+            <th>Size</th>
+            <th>Stock</th>
+        </tr>
+        <tr>
+            <th>{{item.pn}}</th>
+            <th>{{item.spec}}</th>
+            <th>{{item.size}}</th>
+            <th>{{item.stock}}</th>
+            <th>{{take_confirm_form.num(placeholder="QTY")}}</th>
+            <th>{{take_confirm_form.customer_name(placeholder="Customer name")}}</th>
+            <th>{{take_confirm_form.submit(type="submit")}}</th>
+        </tr>
+    </table>
+</form>
+
+{% endblock %}

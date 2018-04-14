@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, BooleanField, SelectField,\
-    SubmitField
+    SubmitField,IntegerField
 from wtforms.validators import DataRequired, Length, Email, Regexp
 from wtforms import ValidationError
 from flask_pagedown.fields import PageDownField
@@ -15,6 +15,10 @@ class ListForm(FlaskForm):
     keyword=StringField("Please input a keyword for search!")
     submit=SubmitField('Search')
 
+class Take_comfirmForm(FlaskForm):
+    num=IntegerField(validators=[DataRequired()])
+    customer_name=StringField('Customer Name')
+    submit=SubmitField('Take')
 class EditProfileForm(FlaskForm):
     name = StringField('Real name', validators=[Length(0, 64)])
     location = StringField('Location', validators=[Length(0, 64)])

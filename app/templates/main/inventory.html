@@ -15,7 +15,7 @@
         </tr>
         {%for i in items%}
             <tr>
-                <th><input type="checkbox" value={{i.pn}} name="select[]"/>{{i.pn}}</th>
+                <th><a href="{{ url_for('.take_confirm',pn=i.pn) }}">{{i.pn}}</a></th>
                 <th>{{i.spec}}</th>
                 <th>{{i.size}}</th>
                 <th>{{i.type}}</th>
