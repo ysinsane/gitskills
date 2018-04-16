@@ -50,7 +50,8 @@ def take_confirm(pn):
             item.stock-=take_confirm_form.num.data
             r=Record(pn=item.pn,spec=item.spec,size=item.size,
             customer_name=take_confirm_form.customer_name.data,
-            qty=take_confirm_form.num.data)
+            qty=take_confirm_form.num.data,
+            username=current_user.username)
             db.session.add_all([item,r])
             db.session.commit()
             flash('You take the blade successfully!') 

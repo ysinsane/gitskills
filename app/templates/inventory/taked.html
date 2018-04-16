@@ -11,7 +11,7 @@
 {%block page_content%}
 <div>{{wtf.quick_form(form,form_type="inline")}}</div>
 <div>
-    <table>
+    <table class="inventory">
         <tr>
             <th>P/N</th>
             <th>Spec</th>
@@ -19,6 +19,7 @@
             <th>QTY</th>
             <th>Customer</th>
             <th>Time</th>
+            <th>By</th>
         </tr>
         {%for i in records%}
             <tr>
@@ -28,6 +29,7 @@
                 <th>{{i.qty}}</th>
                 <th>{{i.customer_name}}</th>
                 <th>{{moment(i.take_time).format('LL')}}</th>
+                <th>{{i.username}}</th>
             </tr>
         {%endfor%}
     </table>

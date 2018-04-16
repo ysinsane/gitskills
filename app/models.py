@@ -24,6 +24,9 @@ class Item(db.Model):
     size=db.Column(db.String(64),nullable=False)
     series=db.Column(db.String(32))
     stock=db.Column(db.Integer,nullable=False)
+    def __repr__(self):
+        return '<Item %r>' % self.spec
+
 class Record(db.Model):
     __tablename__='Records'
     id=db.Column(db.Integer,primary_key=True)
@@ -34,6 +37,8 @@ class Record(db.Model):
     qty=db.Column(db.Integer,nullable=False)
     take_time = db.Column(db.DateTime, default=datetime.utcnow)
     username=db.Column(db.String(64))
+    def __repr__(self):
+        return '<User %r take %r>' % (self.username,self.pn)
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
