@@ -20,12 +20,15 @@ class Item(db.Model):
     __tablename__='items'
     id=db.Column(db.Integer,primary_key=True)
     pn=db.Column(db.String(32),unique=True)
-    spec=db.Column(db.String(64),unique=True,index=True,nullable=False)
+    spec=db.Column(db.String(64),index=True,nullable=False)
     size=db.Column(db.String(64),nullable=False)
     series=db.Column(db.String(32))
     stock=db.Column(db.Integer,nullable=False)
     def __repr__(self):
         return '<Item %r>' % self.spec
+    
+    def override_items(self, filename):
+        csvreader=csv.reader()
 
 class Record(db.Model):
     __tablename__='Records'
