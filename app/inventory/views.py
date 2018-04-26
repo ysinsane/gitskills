@@ -47,7 +47,7 @@ def management():
             rows = [row for row in reader]
             rows.pop(0)
             for row in rows:
-                print (row[1]+row[2]+row[3])
+                print (row[1]+row[2]+row[3]+row[4])
                 if row[1]!='' and row[2]!='' and row[4]!='':
                     
                     item=Item(pn=row[0],spec=row[1],size=row[2],series=row[3],stock=row[4])
@@ -64,21 +64,23 @@ def management():
 def index():
     form = SearchForm()
     page = request.args.get('page', 1, type=int)
-    pagination = Item.query.paginate(
+    search = request.args.get('search','')
+    pagination = Item.query.filter(
+            Item.spec.like("%" + search + "%")).paginate(
         page,
         per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
-    items = pagination.items
+    pagination.page=page
     if form.validate_on_submit():
-        keyword = form.keyword.data
+        search = form.keyword.data
         pagination = db.session.query(Item).filter(
-            Item.spec.like("%" + keyword + "%")).paginate(
-                page,
+            Item.spec.like("%" + search + "%")).paginate(
+                1,
                 per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
                 error_out=False)
-        items = pagination.items
+    items = pagination.items
     return render_template(
-        'inventory/index.html', form=form, items=items, pagination=pagination)
+        'inventory/index.html', form=form, items=items, pagination=pagination,search=search)
 
 
 @inventory.route('/take_confirm/<pn>', methods=['GET', 'POST'])
