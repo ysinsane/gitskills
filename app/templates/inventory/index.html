@@ -3,7 +3,10 @@
 {% import "_macros.html" as macros %}
 
 {%block page_content%}
-<div>{{wtf.quick_form(form,form_type="inline")}}</div>
+<form class="form" name="form" method="POST" action="">
+    {{form.keyword(placeholder="PN, Spec or Size")}}
+    {{form.submit(type="submit")}}
+</form>
 <div>
     <table class="inventory">
         <tr>

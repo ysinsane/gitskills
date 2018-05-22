@@ -2,13 +2,14 @@ from flask import render_template, redirect, url_for, abort, flash, request,\
     current_app, make_response
 from flask_login import login_required, current_user
 from flask_sqlalchemy import get_debug_queries
-from sqlalchemy.sql.expression import and_
+from sqlalchemy.sql.expression import and_, or_
 from . import inventory
 from .forms import *
 from .. import db
 from ..models import Permission, Role, User, Post, Comment, Item, Record
 import csv
 import os
+
 
 @inventory.route('/taked', methods=['GET', 'POST'])
 def taked():
@@ -19,7 +20,7 @@ def taked():
         per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     records = pagination.items
-    if form.validate_on_submit():
+    if form.is_submitted():
         keyword, username = form.keyword.data, form.username.data
         pagination = db.session.query(Record).filter(
             and_(
@@ -35,52 +36,70 @@ def taked():
         records=records,
         pagination=pagination)
 
-@inventory.route('/management',methods=['GET', 'POST'])
+
+@inventory.route('/management', methods=['GET', 'POST'])
 def management():
-    form=FileForm()
+    form = FileForm()
     if form.validate_on_submit():
-        with open('test.csv','wb') as f:
+        with open('test.csv', 'wb') as f:
             f.write(form.file.data.read())
             Item.query.delete()
-        with open("test.csv", "r", encoding = "utf-8") as f:
+        with open("test.csv", "r", encoding="utf-8") as f:
             reader = csv.reader(f)
             rows = [row for row in reader]
             rows.pop(0)
             for row in rows:
-                print (row[1]+row[2]+row[3]+row[4])
-                if row[1]!='' and row[2]!='' and row[4]!='':
-                    
-                    item=Item(pn=row[0],spec=row[1],size=row[2],series=row[3],stock=row[4])
+                print(row[1] + row[2] + row[3] + row[4])
+                if row[1] != '' and row[2] != '' and row[4] != '':
+
+                    item = Item(
+                        pn=row[0],
+                        spec=row[1],
+                        size=row[2],
+                        series=row[3],
+                        stock=row[4])
                     db.session.add(item)
                     try:
                         db.session.commit()
                     except e:
-                        print(e+'!!!!!!!!!!!************')
-                        flash('please check the csv file you upload is right.e.g: is P/N unique?') 
-    return render_template(
-        'inventory/manage.html', form=form)
+                        print(e + '!!!!!!!!!!!************')
+                        flash(
+                            'please check the csv file you upload is right.e.g: is P/N unique?'
+                        )
+    return render_template('inventory/manage.html', form=form)
+
 
 @inventory.route('/index', methods=['GET', 'POST'])
 def index():
     form = SearchForm()
     page = request.args.get('page', 1, type=int)
-    search = request.args.get('search','')
+    search = request.args.get('search', '')
     pagination = Item.query.filter(
-            Item.spec.like("%" + search + "%")).paginate(
-        page,
-        per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    pagination.page=page
-    if form.validate_on_submit():
-        search = form.keyword.data
-        pagination = db.session.query(Item).filter(
-            Item.spec.like("%" + search + "%")).paginate(
-                1,
+        or_(
+            Item.spec.like("%" + search + "%"),
+            Item.pn.like("%" + search + "%"),
+            Item.size.like("%" + search + "%"))).paginate(
+                page,
                 per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
                 error_out=False)
+    pagination.page = page
+    if form.is_submitted():
+        search = form.keyword.data
+        pagination = Item.query.filter(
+            or_(
+                Item.spec.like("%" + search + "%"),
+                Item.pn.like("%" + search + "%"),
+                Item.size.like("%" + search + "%"))).paginate(
+                    1,
+                    per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                    error_out=False)
     items = pagination.items
     return render_template(
-        'inventory/index.html', form=form, items=items, pagination=pagination,search=search)
+        'inventory/index.html',
+        form=form,
+        items=items,
+        pagination=pagination,
+        search=search)
 
 
 @inventory.route('/take_confirm/<pn>', methods=['GET', 'POST'])

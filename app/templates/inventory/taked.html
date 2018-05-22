@@ -9,7 +9,11 @@
 {%endblock%}
 
 {%block page_content%}
-<div>{{wtf.quick_form(form,form_type="inline")}}</div>
+<form class="form" name="form" method="POST" action="">
+    {{form.keyword(placeholder="Spec")}}
+    {{form.username(placeholder="Name")}}
+    {{form.submit(type="submit")}}
+</form>
 <div>
     <table class="inventory">
         <tr>

@@ -23,10 +23,14 @@ app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
+
 def make_shell_context():
-    return dict(app=app, db=db, User=User, Role=Role,Item=Item,Record=Record,generate_fake_items=Items_fake)
+    return dict(app=app, db=db, User=User, Role=Role, Item=Item, Record=Record, generate_fake_items=Items_fake)
+
+    
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
+
 
 @manager.command
 def test(coverage=False):
@@ -48,6 +52,8 @@ def test(coverage=False):
     COV.html_report(directory=covdir)
     print('HTML version: file:// % s/index.html' % covdir)
     COV.erase()
+
+
 @manager.command
 def profile(length=25, profile_dir=None):
     """Start the application under the code profiler."""
@@ -58,12 +64,14 @@ def profile(length=25, profile_dir=None):
 @manager.command
 def deploy():
     """Run deployment tasks."""
-    from flask.ext.migrate import upgrade
+    from flask_migrate import upgrade
     # 把数据库迁移到最新修订版本
     upgrade()
     # 创建用户角色
     Role.insert_roles()
     # 让所有用户都关注此用户
     User.add_self_follows()
+
+
 if __name__ == '__main__':
     manager.run()
