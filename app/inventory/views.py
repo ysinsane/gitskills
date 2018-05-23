@@ -48,24 +48,22 @@ def management():
             reader = csv.reader(f)
             rows = [row for row in reader]
             rows.pop(0)
-            for row in rows:
-                print(row[1] + row[2] + row[3] + row[4])
-                if row[1] != '' and row[2] != '' and row[4] != '':
-
-                    item = Item(
-                        pn=row[0],
-                        spec=row[1],
-                        size=row[2],
-                        series=row[3],
-                        stock=row[4])
-                    db.session.add(item)
-                    try:
+            try:
+                for row in rows:
+                    if row[1] != '' and row[2] != '' and row[4] != '':
+                        item = Item(
+                            pn=row[0],
+                            spec=row[1],
+                            size=row[2],
+                            series=row[3],
+                            stock=row[4])
+                        db.session.add(item)
                         db.session.commit()
-                    except e:
-                        print(e + '!!!!!!!!!!!************')
-                        flash(
-                            'please check the csv file you upload is right.e.g: is P/N unique?'
-                        )
+            except Exception as e:
+                        print(e)
+                        flash('''Failed!please check the csv file you upload is right.e.g: is P/N unique?
+                        And reset the inventory again!''')
+            flash('Inventory has been reset,if no error showed on this page,it success!')
     return render_template('inventory/manage.html', form=form)
 
 
